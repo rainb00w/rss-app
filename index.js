@@ -7,7 +7,7 @@ const { message } = require('telegraf/filters');
 const bot = new Telegraf('6418043578:AAGzHKDArbYNSagXJT4NtVlI8OCVcwmaHys');
 
 let receivedFeed = [];
-let mainFeed = [];
+let mainFeed = [[], []];
 
 bot.start((ctx) => {
   ctx.replyWithHTML(`<strong>Welcome</strong>`);
@@ -17,26 +17,29 @@ bot.start((ctx) => {
     );
 
     receivedFeed = [];
-    data && data.items.forEach((item) => receivedFeed.push(item.title));
+    data &&
+      data.items.forEach((item) =>
+        receivedFeed.push([item.title, item.link, item.contentSnippet])
+      );
     console.log('-- Receiving the data');
-    ctx.reply('-- Receiving the data');
+    // ctx.reply('-- Receiving the data');
 
-    if (receivedFeed[0] !== mainFeed[0]) {
+    if (mainFeed && receivedFeed[0][0] !== mainFeed[0][0]) {
       console.log('THE ARE DIFFERENT');
-      console.log(receivedFeed[0]);
+      console.log(receivedFeed[0][0]);
       receivedFeed.forEach((item) => {
-        console.log('---item ', item);
+        // console.log('---item ', item);
         if (!mainFeed.includes(item)) {
-          console.log(`that's new!`, item);
-          ctx.replyWithHTML(`<strong> --- </strong> `);
-          ctx.replyWithHTML(`<strong> ${item}</strong> `);
+          ctx.replyWithHTML(
+            `______________ \n ${item[0]} \n ${item[2]} \n ${item[1]} \n _____________`
+          );
         }
       });
 
       console.log('!!!!!! Merging to mainFeed');
       mainFeed = receivedFeed;
     }
-  }, 30000);
+  }, 5000);
 });
 
 bot.launch();
