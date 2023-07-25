@@ -39,7 +39,7 @@ bot.start((ctx) => {
       console.log('!!!!!! Merging to mainFeed');
       mainFeed = receivedFeed;
     }
-  }, 5000);
+  }, 60000);
 });
 
 bot.launch();
