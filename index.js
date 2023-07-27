@@ -17,6 +17,7 @@ let mainFeed = [[], []];
 let mainFeedDOU = [[], []];
 
 app.get('/', function (req, res) {
+  console.log('get request!');
   setInterval(async () => {
     console.log('receiving data');
     data = await parser.parseURL(
