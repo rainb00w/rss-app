@@ -17,7 +17,12 @@ let mainFeed = [[], []];
 let mainFeedDOU = [[], []];
 
 app.get('/', function (req, res) {
-  console.log('get request!');
+  function clg() {
+    console.log('get request!');
+  }
+
+  clg();
+
   setInterval(async () => {
     console.log('receiving data');
     data = await parser.parseURL(
