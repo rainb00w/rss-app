@@ -1,3 +1,13 @@
+const express = require('express');
+const app = express();
+
+app.get('/', function (req, res) {
+  res.send('Hello World');
+});
+
+const port = process.env.PORT || 9001;
+app.listen(port, () => console.log(`Port - ${port}`));
+
 let Parser = require('rss-parser');
 let parser = new Parser();
 const axios = require('axios');
