@@ -23,7 +23,7 @@ app.get('/', function (req, res) {
 
   clg();
 
-  setInterval(async () => {
+  const interval = setInterval(async () => {
     console.log('receiving data');
     data = await parser.parseURL(
       'https://www.upwork.com/ab/feed/topics/rss?securityToken=b19c102ae4e12f8d28ba6c1e3fe58816ad134950ff988993af4a4a5b801ab3f594bb2f4bf3b82ece28039fdd66b39fd9924d35c2f4463c18acdc735b99aabf59&userUid=569918438172733440&orgUid=569918438181122049'
@@ -59,6 +59,7 @@ app.get('/', function (req, res) {
       feedIteration(receivedFeed);
     }
     mainFeed = receivedFeed;
-  }, 60000);
+  }, 10000);
+
   res.send('Hello World');
 });
