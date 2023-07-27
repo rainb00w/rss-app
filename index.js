@@ -1,48 +1,49 @@
 let Parser = require('rss-parser');
 let parser = new Parser();
+const axios = require('axios');
 
-const { Telegraf } = require('telegraf');
-const { message } = require('telegraf/filters');
+const token = '6418043578:AAGzHKDArbYNSagXJT4NtVlI8OCVcwmaHys';
+const CHAT_ID = '-1001943237045';
+const CHAT_ID_DOU = '-1001964648343';
 
-const bot = new Telegraf('6418043578:AAGzHKDArbYNSagXJT4NtVlI8OCVcwmaHys');
-
-let receivedFeed = [];
+const URL_API = `https://api.telegram.org/bot${token}/sendMessage`;
 let mainFeed = [[], []];
+let mainFeedDOU = [[], []];
 
-bot.start((ctx) => {
-  ctx.replyWithHTML(`<strong>Welcome</strong>`);
-  setInterval(async () => {
-    data = await parser.parseURL(
-      'https://www.upwork.com/ab/feed/topics/rss?securityToken=b19c102ae4e12f8d28ba6c1e3fe58816ad134950ff988993af4a4a5b801ab3f594bb2f4bf3b82ece28039fdd66b39fd9924d35c2f4463c18acdc735b99aabf59&userUid=569918438172733440&orgUid=569918438181122049'
+setInterval(async () => {
+  console.log('receiving data');
+  data = await parser.parseURL(
+    'https://www.upwork.com/ab/feed/topics/rss?securityToken=b19c102ae4e12f8d28ba6c1e3fe58816ad134950ff988993af4a4a5b801ab3f594bb2f4bf3b82ece28039fdd66b39fd9924d35c2f4463c18acdc735b99aabf59&userUid=569918438172733440&orgUid=569918438181122049'
+  );
+
+  newFeed = [];
+  data &&
+    data.items.forEach((item) =>
+      newFeed.push([item.title, item.link, item.contentSnippet])
     );
 
-    receivedFeed = [];
-    data &&
-      data.items.forEach((item) =>
-        receivedFeed.push([item.title, item.link, item.contentSnippet])
-      );
-    console.log('-- Receiving the data');
-    // ctx.reply('-- Receiving the data');
+  const receivedFeed = newFeed.slice(0, 5);
 
-    if (mainFeed && receivedFeed[0][0] !== mainFeed[0][0]) {
-      console.log('THE ARE DIFFERENT');
-      console.log(receivedFeed[0][0]);
-      receivedFeed.forEach((item) => {
-        // console.log('---item ', item);
-        if (!mainFeed.includes(item)) {
-          ctx.replyWithHTML(
-            `______________ \n ${item[0]} \n ${item[2]} \n ${item[1]} \n _____________`
-          );
+  const flattenedMainFeed = mainFeed.flat();
+
+  if (receivedFeed[0][0] !== mainFeed[0][0]) {
+    console.log('--------- here');
+    async function feedIteration(array) {
+      for (const item of array) {
+        let messageBody = `${item[0]} \n ${item[2]} \n ${item[1]}`;
+
+        if (!flattenedMainFeed.includes(item[0])) {
+          axios.post(URL_API, {
+            chat_id: CHAT_ID,
+            parse_mode: 'html',
+            disable_web_page_preview: true,
+            text: messageBody,
+          });
         }
-      });
-
-      console.log('!!!!!! Merging to mainFeed');
-      mainFeed = receivedFeed;
+      }
     }
-  }, 60000);
-});
 
-bot.launch();
-// Enable graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+    feedIteration(receivedFeed);
+  }
+  mainFeed = receivedFeed;
+}, 60000);
