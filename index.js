@@ -63,7 +63,7 @@ async function feedRequest() {
   }
   mainFeed = receivedFeed;
 
-  setTimeout(feedRequest(), 9000);
+  setTimeout(feedRequest(), 15000);
 }
 
 feedRequest();
