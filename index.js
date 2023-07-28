@@ -59,6 +59,8 @@ app.get('/', function (req, res) {
       feedIteration(receivedFeed);
     }
     mainFeed = receivedFeed;
+
+    setTimeout(feedRequest(), 9000);
   }
 
   feedRequest();
